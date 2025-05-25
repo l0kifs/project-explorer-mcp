@@ -1,0 +1,13 @@
+[project]
+name = "project-explorer-mcp"
+version = "0.1.0"
+description = "MCP server toolkit for analyzing the structure of a Python project"
+authors = [
+  { name = "Serj", email = "l0kifs91@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+  "fastmcp",
+  "parso",
+  "mistune"
+]
