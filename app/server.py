@@ -34,6 +34,11 @@ def _is_valid_path(path: str) -> tuple[bool, str]:
 def dir_tree(root_path: str, max_depth: int = 3) -> str:
     """Returns a compact file and folder tree with depth limitation.
 
+    Agent usage guidelines:
+        - Use this tool when you need to get a quick overview of the file and folder structure of a project or directory.
+        - Use when you need to display or analyze the hierarchy of files and folders up to a certain depth.
+        - Do not use for reading file contents or for non-existent/relative paths.
+
     Path requirements:
         - The path must not contain URL-encoding (e.g., '%').
         - The path must be absolute.
@@ -82,6 +87,11 @@ def python_outline(paths: list[str]) -> dict:
     """
     Returns an outline for each Python file: imports, classes, functions, docstrings.
 
+    Agent usage guidelines:
+        - Use this tool when you need to understand the structure of Python code files, such as for code review, navigation, or documentation generation.
+        - Use when you need to extract or display the list of imports, classes, functions, and their docstrings from Python files.
+        - Do not use for non-Python files or for reading file contents in detail.
+
     Path requirements:
         - Paths must not contain URL-encoding (e.g., '%').
         - Paths must be absolute.
@@ -117,13 +127,14 @@ def python_outline(paths: list[str]) -> dict:
                 for node in tree.body:
                     if isinstance(node, ast.Import):
                         for n in node.names:
-                            imports.append(n.name)
+                            imports.append({"name": n.name, "line": node.lineno})
                     elif isinstance(node, ast.ImportFrom):
                         mod = node.module or ""
                         for n in node.names:
-                            imports.append(f"{mod}.{n.name}" if mod else n.name)
+                            import_name = f"{mod}.{n.name}" if mod else n.name
+                            imports.append({"name": import_name, "line": node.lineno})
                     elif isinstance(node, ast.ClassDef):
-                        cls = {"name": node.name}
+                        cls = {"name": node.name, "line": node.lineno}
                         cdoc = ast.get_docstring(node)
                         if cdoc:
                             cls["docstring"] = cdoc
@@ -131,19 +142,16 @@ def python_outline(paths: list[str]) -> dict:
                         for item in node.body:
                             if isinstance(item, ast.FunctionDef):
                                 mdoc = ast.get_docstring(item)
-                                method = {"name": item.name}
+                                method = {"name": item.name, "line": item.lineno}
                                 if mdoc:
                                     method["docstring"] = mdoc
-                                if len(method) > 1:
-                                    methods.append(method)
-                                elif mdoc is None:
-                                    methods.append(method)
+                                methods.append(method)
                         if methods:
                             cls["methods"] = methods
                         classes.append(cls)
                     elif isinstance(node, ast.FunctionDef):
                         fdoc = ast.get_docstring(node)
-                        func = {"name": node.name}
+                        func = {"name": node.name, "line": node.lineno}
                         if fdoc:
                             func["docstring"] = fdoc
                         functions.append(func)
@@ -164,6 +172,11 @@ def python_outline(paths: list[str]) -> dict:
 @mcp.tool()
 def markdown_outline(paths: list[str]) -> dict:
     """Returns an outline for each Markdown file: headings, levels, line.
+
+    Agent usage guidelines:
+        - Use this tool when you need to extract or display the structure of Markdown documents, such as for navigation, summary, or documentation analysis.
+        - Use when you need to list headings, their levels, and line numbers in Markdown files.
+        - Do not use for non-Markdown files or for reading the full content of the file.
 
     Path requirements:
         - Paths must not contain URL-encoding (e.g., '%').
