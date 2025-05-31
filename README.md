@@ -24,6 +24,32 @@ MCP server toolkit for analyzing the structure of a Python project.
    }
    ```
 
+### Настройка инструментов
+
+Вы можете управлять включением/отключением конкретных MCP инструментов через аргументы командной строки:
+
+#### Все инструменты (по умолчанию)
+
+```bash
+uv run app/server.py
+```
+
+#### Включить только определенные инструменты
+
+```bash
+uv run app/server.py --enable dir_tree
+uv run app/server.py --enable dir_tree python_outline
+```
+
+#### Отключить определенные инструменты
+
+```bash
+uv run app/server.py --disable python_outline
+uv run app/server.py --disable dir_tree markdown_outline
+```
+
+**Доступные инструменты:** `dir_tree`, `python_outline`, `markdown_outline`
+
 ## Server Tools
 
 ### dir_tree
