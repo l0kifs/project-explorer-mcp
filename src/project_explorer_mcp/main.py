@@ -25,26 +25,11 @@ def _register_tools():
     if _tools_registered:
         return
 
-    # Get configuration from settings
-    settings = get_settings()
-
-    # Register tools based on configuration
-    if settings.dir_tree_enabled:
-        register_dir_tree(mcp)
-        logger.info("Registered dir_tree tool")
-
-    if settings.python_outline_enabled:
-        register_python_outline(mcp)
-        logger.info("Registered python_outline tool")
-
-    if settings.markdown_outline_enabled:
-        register_markdown_outline(mcp)
-        logger.info("Registered markdown_outline tool")
-
-    if settings.openapi_enabled:
-        register_openapi_list_operations(mcp)
-        register_openapi_get_operation_details(mcp)
-        logger.info("Registered OpenAPI tools")
+    register_dir_tree(mcp)
+    register_python_outline(mcp)
+    register_markdown_outline(mcp)
+    register_openapi_list_operations(mcp)
+    register_openapi_get_operation_details(mcp)
 
     _tools_registered = True
 

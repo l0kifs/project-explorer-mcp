@@ -31,22 +31,12 @@ class Settings(BaseSettings):
 
     # Logging settings
     logging_level: str = Field(default="INFO", description="Logging level")
-    logging_console_format: str = Field(
+    logging_format: str = Field(
         default="{time:YYYY-MM-DD HH:mm:ss} | {extra[app]} v{extra[version]} | {level: <8} | {name}:{function}:{line} - {message} | {extra}",
         description="Console log format",
     )
-    logging_file_level: str = Field(default="DEBUG", description="File logging level")
-    logging_file_dir: str = Field(default="logs", description="Directory for log files")
 
     # Tool settings
-    dir_tree_enabled: bool = Field(default=True, description="Enable dir_tree tool")
-    python_outline_enabled: bool = Field(
-        default=True, description="Enable python_outline tool"
-    )
-    markdown_outline_enabled: bool = Field(
-        default=True, description="Enable markdown_outline tool"
-    )
-    openapi_enabled: bool = Field(default=True, description="Enable openapi tools")
     default_output_format: OutputFormat = Field(
         default=OutputFormat.MARKDOWN,
         description="Default output format for tools (json or markdown)",

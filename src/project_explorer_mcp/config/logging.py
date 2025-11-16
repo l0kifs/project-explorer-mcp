@@ -19,23 +19,10 @@ def setup_logging():
     logger.add(
         sys.stderr,
         level=settings.logging_level,
-        format=settings.logging_console_format,
-        colorize=True,  # Enable colors in console
-        backtrace=True,  # Show full traceback on errors
-        diagnose=True,  # Show variable values in tracebacks (disable in production for security)
-        enqueue=True,  # Thread-safe logging
-        catch=True,  # Catch and log logging errors
-    )
-
-    # File handler - structured JSON logging
-    logger.add(
-        settings.logging_file_dir + "/app.log",
-        level=settings.logging_file_level,
-        serialize=True,  # JSON serialization
-        rotation="10 MB",  # Rotate when file reaches 10MB
-        retention="30 days",  # Keep logs for 30 days
-        compression="gz",  # Compress rotated files
-        encoding="utf-8",
+        format=settings.logging_format,
+        colorize=False,
+        backtrace=True,
+        diagnose=True,
         enqueue=True,
         catch=True,
     )
@@ -46,6 +33,5 @@ def setup_logging():
     # Log startup message
     logger.info(
         "Logging system initialized",
-        log_file=str(settings.logging_file_dir + "/app.log"),
         log_level=settings.logging_level,
     )
