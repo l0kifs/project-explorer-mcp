@@ -1,0 +1,39 @@
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    """Main application settings"""
+
+    model_config = SettingsConfigDict(
+        env_prefix="PROJECT_EXPLORER_MCP__",
+        env_nested_delimiter="__",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore",
+    )
+
+    # Application settings
+    app_name: str = Field(
+        default="project-explorer-mcp", description="Application name"
+    )
+    app_version: str = Field(default="0.1.0", description="Application version")
+
+    # Logging settings
+    log_level: str = Field(default="INFO", description="Logging level")
+    log_file_dir: str = Field(default="logs", description="Directory for log files")
+
+    # Tool settings
+    dir_tree_enabled: bool = Field(default=True, description="Enable dir_tree tool")
+    python_outline_enabled: bool = Field(
+        default=True, description="Enable python_outline tool"
+    )
+    markdown_outline_enabled: bool = Field(
+        default=True, description="Enable markdown_outline tool"
+    )
+
+
+def get_settings() -> Settings:
+    """Retrieve application settings"""
+    return Settings()

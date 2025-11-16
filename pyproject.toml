@@ -1,13 +1,37 @@
+[build-system]
+requires = ["uv_build>=0.9.9"]
+build-backend = "uv_build"
+
 [project]
 name = "project-explorer-mcp"
 version = "0.1.0"
 description = "MCP server toolkit for analyzing the structure of a Python project"
 authors = [
-  { name = "Serj", email = "l0kifs91@gmail.com" }
+  { name = "l0kifs", email = "l0kifs91@gmail.com" }
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
-  "fastmcp",
-  "parso",
-  "mistune"
+  "fastmcp>=2.13.1",
+  "parso>=0.8.3",
+  "mistune>=3.1.4",
+  "loguru>=0.7.3",
+  "pydantic>=2.11.7",
+  "pydantic-settings>=2.10.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/l0kifs/project-explorer-mcp"
+Documentation = "https://github.com/l0kifs/project-explorer-mcp/blob/main/README.md"
+Repository = "https://github.com/l0kifs/project-explorer-mcp.git"
+Issues = "https://github.com/l0kifs/project-explorer-mcp/issues"
+Changelog = "https://github.com/l0kifs/project-explorer-mcp/blob/main/CHANGELOG.md"
+
+[project.scripts]
+project-explorer-mcp = "project_explorer_mcp.main:run"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "pytest>=9.0.1",
+    "ruff>=0.14.5",
 ]
