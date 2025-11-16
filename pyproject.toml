@@ -6,10 +6,42 @@ build-backend = "uv_build"
 name = "project-explorer-mcp"
 version = "0.1.0"
 description = "MCP server toolkit for analyzing the structure of a Python project"
-authors = [
-  { name = "l0kifs", email = "l0kifs91@gmail.com" }
-]
 requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+    { name = "l0kifs", email = "l0kifs91@gmail.com" }
+]
+maintainers = [
+    { name = "l0kifs", email = "l0kifs91@gmail.com" }
+]
+keywords = [
+    "mcp",
+    "model-context-protocol",
+    "code-analysis",
+    "python-analysis",
+    "ast",
+    "project-structure",
+    "code-outline",
+    "developer-tools",
+    "fastmcp"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Text Processing :: Markup :: Markdown",
+    "Environment :: Plugins",
+    "Natural Language :: English",
+]
 dependencies = [
   "fastmcp>=2.13.1",
   "parso>=0.8.3",
