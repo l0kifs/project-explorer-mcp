@@ -4,7 +4,8 @@ import ast
 
 from fastmcp import FastMCP
 
-from ..utils import is_valid_path, strip_empty
+from ..config.settings import get_settings
+from ..utils import format_python_outline_as_markdown, is_valid_path, strip_empty
 
 
 def register_python_outline(mcp: FastMCP):
@@ -15,7 +16,9 @@ def register_python_outline(mcp: FastMCP):
     """
 
     @mcp.tool()
-    def python_outline(paths: list[str]) -> dict:
+    def python_outline(
+        paths: list[str], output_format: str | None = None
+    ) -> dict | str:
         """
         Returns an outline for each Python file: imports, classes, functions, docstrings.
 
@@ -34,14 +37,24 @@ def register_python_outline(mcp: FastMCP):
 
         Args:
             paths (list[str]): List of absolute paths to Python files.
+            output_format (str | None): Output format ('json' or 'markdown').
+                Defaults to server setting (markdown by default).
         Returns:
-            dict: Dictionary with outline for each file.
+            dict | str: Outline for each file in the requested format.
         """
+        # Get default output format from settings if not provided
+        if output_format is None:
+            settings = get_settings()
+            output_format = settings.default_output_format.value
+
         # Path check
         for path in paths:
             valid, msg = is_valid_path(path)
             if not valid:
-                return {path: {"error": msg}}
+                error_result = {path: {"error": msg}}
+                if output_format == "markdown":
+                    return format_python_outline_as_markdown(error_result)
+                return error_result
         try:
             result = {}
             for path in paths:
@@ -98,6 +111,13 @@ def register_python_outline(mcp: FastMCP):
                 except Exception as e:
                     outline = {"error": str(e)}
                 result[path] = strip_empty(outline)
+
+            # Format output based on requested format
+            if output_format == "markdown":
+                return format_python_outline_as_markdown(result)
             return result
         except Exception as e:
+            if output_format == "markdown":
+                error_dict: dict[str, dict[str, str]] = {"error": {"error": str(e)}}
+                return format_python_outline_as_markdown(error_dict)
             return {"error": str(e)}

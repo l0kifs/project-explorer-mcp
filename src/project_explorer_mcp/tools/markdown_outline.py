@@ -4,7 +4,8 @@ import re
 
 from fastmcp import FastMCP
 
-from ..utils import is_valid_path
+from ..config.settings import get_settings
+from ..utils import format_markdown_outline_as_markdown, is_valid_path
 
 
 def register_markdown_outline(mcp: FastMCP):
@@ -15,7 +16,9 @@ def register_markdown_outline(mcp: FastMCP):
     """
 
     @mcp.tool()
-    def markdown_outline(paths: list[str]) -> dict:
+    def markdown_outline(
+        paths: list[str], output_format: str | None = None
+    ) -> dict | str:
         """Returns an outline for each Markdown file: headings, levels, line.
 
         Agent usage guidelines:
@@ -33,15 +36,25 @@ def register_markdown_outline(mcp: FastMCP):
 
         Args:
             paths (list[str]): List of absolute paths to Markdown files.
+            output_format (str | None): Output format ('json' or 'markdown').
+                Defaults to server setting (markdown by default).
 
         Returns:
-            dict: Dictionary with outline for each file.
+            dict | str: Outline for each file in the requested format.
         """
+        # Get default output format from settings if not provided
+        if output_format is None:
+            settings = get_settings()
+            output_format = settings.default_output_format.value
+
         # Path check
         for path in paths:
             valid, msg = is_valid_path(path)
             if not valid:
-                return {path: [{"error": msg}]}
+                error_result = {path: [{"error": msg}]}
+                if output_format == "markdown":
+                    return format_markdown_outline_as_markdown(error_result)
+                return error_result
         try:
             result = {}
             header_re = re.compile(r"^(#+)\s+(.*)")
@@ -61,6 +74,12 @@ def register_markdown_outline(mcp: FastMCP):
                 except Exception as e:
                     outline = [{"error": str(e)}]
                 result[path] = outline
+
+            # Format output based on requested format
+            if output_format == "markdown":
+                return format_markdown_outline_as_markdown(result)
             return result
         except Exception as e:
+            if output_format == "markdown":
+                return f"**Error:** {str(e)}"
             return {"error": str(e)}

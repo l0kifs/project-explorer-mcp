@@ -1,5 +1,14 @@
+from enum import Enum
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class OutputFormat(str, Enum):
+    """Output format for tool responses"""
+
+    JSON = "json"
+    MARKDOWN = "markdown"
 
 
 class Settings(BaseSettings):
@@ -31,6 +40,10 @@ class Settings(BaseSettings):
     )
     markdown_outline_enabled: bool = Field(
         default=True, description="Enable markdown_outline tool"
+    )
+    default_output_format: OutputFormat = Field(
+        default=OutputFormat.MARKDOWN,
+        description="Default output format for tools (json or markdown)",
     )
 
 
