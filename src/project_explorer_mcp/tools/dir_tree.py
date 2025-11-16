@@ -3,6 +3,7 @@
 import os
 
 from fastmcp import FastMCP
+from loguru import logger
 
 from ..config.settings import get_settings
 from ..utils import is_valid_path
@@ -43,6 +44,12 @@ def register_dir_tree(mcp: FastMCP):
         Returns:
             str | dict: File and folder tree in the requested format or error dict.
         """
+        logger.info(
+            "dir_tree tool called",
+            root_path=root_path,
+            max_depth=max_depth,
+            output_format=output_format,
+        )
         # Get default output format from settings if not provided
         if output_format is None:
             settings = get_settings()
@@ -51,6 +58,7 @@ def register_dir_tree(mcp: FastMCP):
         # Path check
         valid, msg = is_valid_path(root_path)
         if not valid:
+            logger.error("Invalid path for dir_tree", root_path=root_path, error=msg)
             return {"error": msg}
         try:
 
@@ -108,4 +116,7 @@ def register_dir_tree(mcp: FastMCP):
             result = tree.strip()
             return f"## Directory Tree: {root_path}\n\n```\n{result}\n```"
         except Exception as e:
+            logger.error(
+                "Error generating directory tree", root_path=root_path, error=str(e)
+            )
             return {"error": str(e)}

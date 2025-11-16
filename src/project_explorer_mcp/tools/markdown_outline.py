@@ -3,6 +3,7 @@
 import re
 
 from fastmcp import FastMCP
+from loguru import logger
 
 from ..config.settings import get_settings
 from ..utils import format_markdown_outline_as_markdown, is_valid_path
@@ -42,6 +43,9 @@ def register_markdown_outline(mcp: FastMCP):
         Returns:
             dict | str: Outline for each file in the requested format.
         """
+        logger.info(
+            "markdown_outline tool called", paths=paths, output_format=output_format
+        )
         # Get default output format from settings if not provided
         if output_format is None:
             settings = get_settings()
@@ -51,6 +55,7 @@ def register_markdown_outline(mcp: FastMCP):
         for path in paths:
             valid, msg = is_valid_path(path)
             if not valid:
+                logger.error("Invalid path for markdown_outline", path=path, error=msg)
                 error_result = {path: [{"error": msg}]}
                 if output_format == "markdown":
                     return format_markdown_outline_as_markdown(error_result)
@@ -71,7 +76,11 @@ def register_markdown_outline(mcp: FastMCP):
                                     outline.append(
                                         {"level": level, "text": text, "line": i}
                                     )
+                    logger.debug(
+                        "Parsed Markdown file outline", path=path, headings=len(outline)
+                    )
                 except Exception as e:
+                    logger.error("Error parsing Markdown file", path=path, error=str(e))
                     outline = [{"error": str(e)}]
                 result[path] = outline
 
@@ -80,6 +89,7 @@ def register_markdown_outline(mcp: FastMCP):
                 return format_markdown_outline_as_markdown(result)
             return result
         except Exception as e:
+            logger.error("Error in markdown_outline tool", error=str(e))
             if output_format == "markdown":
                 return f"**Error:** {str(e)}"
             return {"error": str(e)}

@@ -109,3 +109,22 @@ def test_markdown_outline_integration():
 
     # Verify the tool was registered (no exception should be raised)
     assert mcp is not None
+
+
+def test_openapi_tools_integration():
+    """Test OpenAPI tools."""
+    from fastmcp import FastMCP
+
+    from project_explorer_mcp.tools.openapi_get_operation_details import (
+        register_openapi_get_operation_details,
+    )
+    from project_explorer_mcp.tools.openapi_list_operations import (
+        register_openapi_list_operations,
+    )
+
+    mcp = FastMCP("test")
+    register_openapi_list_operations(mcp)
+    register_openapi_get_operation_details(mcp)
+
+    # Verify the tools were registered (no exception should be raised)
+    assert mcp is not None

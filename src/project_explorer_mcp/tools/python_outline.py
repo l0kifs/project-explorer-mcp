@@ -3,6 +3,7 @@
 import ast
 
 from fastmcp import FastMCP
+from loguru import logger
 
 from ..config.settings import get_settings
 from ..utils import format_python_outline_as_markdown, is_valid_path, strip_empty
@@ -42,6 +43,9 @@ def register_python_outline(mcp: FastMCP):
         Returns:
             dict | str: Outline for each file in the requested format.
         """
+        logger.info(
+            "python_outline tool called", paths=paths, output_format=output_format
+        )
         # Get default output format from settings if not provided
         if output_format is None:
             settings = get_settings()
@@ -51,6 +55,7 @@ def register_python_outline(mcp: FastMCP):
         for path in paths:
             valid, msg = is_valid_path(path)
             if not valid:
+                logger.error("Invalid path for python_outline", path=path, error=msg)
                 error_result = {path: {"error": msg}}
                 if output_format == "markdown":
                     return format_python_outline_as_markdown(error_result)
@@ -108,7 +113,15 @@ def register_python_outline(mcp: FastMCP):
                         outline["classes"] = classes
                     if functions:
                         outline["functions"] = functions
+                    logger.debug(
+                        "Parsed Python file outline",
+                        path=path,
+                        imports=len(imports),
+                        classes=len(classes),
+                        functions=len(functions),
+                    )
                 except Exception as e:
+                    logger.error("Error parsing Python file", path=path, error=str(e))
                     outline = {"error": str(e)}
                 result[path] = strip_empty(outline)
 
@@ -117,6 +130,7 @@ def register_python_outline(mcp: FastMCP):
                 return format_python_outline_as_markdown(result)
             return result
         except Exception as e:
+            logger.error("Error in python_outline tool", error=str(e))
             if output_format == "markdown":
                 error_dict: dict[str, dict[str, str]] = {"error": {"error": str(e)}}
                 return format_python_outline_as_markdown(error_dict)

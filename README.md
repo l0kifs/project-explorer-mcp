@@ -16,6 +16,8 @@ MCP server toolkit for analyzing the structure of a Python project.
       "project-explorer": {
         "command": "uv",
         "args": [
+          "--directory",
+          "path/to/project-explorer-mcp",
           "run",
           "project-explorer-mcp"
          ]
@@ -24,7 +26,7 @@ MCP server toolkit for analyzing the structure of a Python project.
    }
    ```
 
-All tools are enabled by default: `dir_tree`, `python_outline`, `markdown_outline`
+All tools are enabled by default: `dir_tree`, `python_outline`, `markdown_outline`, `openapi_list_operations`, `openapi_get_operation_details`
 
 ## Configuration
 
@@ -156,4 +158,109 @@ You can override the default format per tool call using the `output_format` para
 
   ```json
   {'tests/test_sample.md': [{'level': 1, 'text': 'Heading 1', 'line': 1}, {'level': 2, 'text': 'Heading 2', 'line': 3}, {'level': 3, 'text': 'Heading 3', 'line': 5}, {'level': 2, 'text': 'Second H2', 'line': 9}]}
+  ```
+
+### openapi_list_operations
+
+- **Description:** Lists all operations from an OpenAPI specification file.
+- **Parameters:**
+  - `spec_path: str` — absolute path to the OpenAPI JSON or YAML file
+  - `output_format: str | None` — output format: `json` or `markdown` (default: server setting)
+- **Output Example (markdown format):**
+
+  ```markdown
+  # OpenAPI Operations
+
+  | Method | Path     | Operation ID | Summary           |
+  | ------ | -------- | ------------ | ----------------- |
+  | GET    | `/users` | listUsers    | List all users    |
+  | POST   | `/users` | createUser   | Create a new user |
+  ```
+
+- **Output Example (json format):**
+
+  ```json
+  {
+    "operations": [
+      {
+        "method": "GET",
+        "path": "/users",
+        "operation_id": "listUsers",
+        "summary": "List users"
+      }
+    ],
+    "count": 1,
+    "error": null
+  }
+  ```
+
+### openapi_get_operation_details
+
+- **Description:** Gets detailed information for specific OpenAPI operations.
+- **Parameters:**
+  - `spec_path: str` — absolute path to the OpenAPI JSON or YAML file
+  - `selectors: list[str]` — list of selectors (operationId, "METHOD /path", or path)
+  - `expand_refs: bool` — whether to resolve $ref references (default: false)
+  - `format_output: str | None` — output format: `json` or `markdown` (default: server setting)
+- **Output Example (markdown format):**
+
+  ```markdown
+  # OpenAPI Operation Details
+
+  ## GET /users
+
+  **Operation ID:** listUsers
+
+  **Summary:** List all users
+
+  **Description:**
+
+  Get a list of all users
+
+  ### Responses
+
+  #### 200
+
+  Successful response
+
+  **Content Types:**
+
+  - `application/json`: `{'type': 'array', 'items': {'type': 'object'}}`
+
+  ---
+  ```
+
+- **Output Example (json format):**
+
+  ```json
+  {
+    "details": [
+      {
+        "method": "GET",
+        "path": "/users",
+        "operation_id": "listUsers",
+        "summary": "List users",
+        "description": "Retrieve a list of users",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {"type": "integer"},
+            "description": "Maximum number of results"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {"type": "array", "items": {"type": "object"}}
+            }
+          }
+        }
+      }
+    ],
+    "count": 1,
+    "error": null
+  }
   ```
