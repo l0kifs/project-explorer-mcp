@@ -1,8 +1,8 @@
-## Publishing to PyPI
+# Publishing to PyPI
 
 This project uses [UV](https://docs.astral.sh/uv/) as the package manager and GitHub Actions for automated publishing to PyPI.
 
-### Prerequisites
+## Prerequisites
 
 1. **PyPI Account**: Create an account at [https://pypi.org/](https://pypi.org/)
 2. **Trusted Publishing**: Configure trusted publishing (no API tokens needed!) at [https://pypi.org/manage/account/publishing/](https://pypi.org/manage/account/publishing/)
@@ -13,7 +13,7 @@ This project uses [UV](https://docs.astral.sh/uv/) as the package manager and Gi
      - Workflow name: `publish-to-pypi.yml`
      - Environment name: (leave blank)
 
-### Automated Publishing (Recommended)
+## Automated Publishing (Recommended)
 
 The project is configured to automatically publish to PyPI when a new GitHub release is created:
 
@@ -30,17 +30,31 @@ The project is configured to automatically publish to PyPI when a new GitHub rel
    ```
 
 3. **Create a GitHub release**:
+   
+   Using GitHub CLI (recommended):
+   ```bash
+   gh release create v0.2.0 \
+     --title "v0.2.0 - Release Title" \
+     --notes "Release notes here..."
+   ```
+   
+   Or using GitHub web interface:
    - Go to [https://github.com/l0kifs/project-explorer-mcp/releases/new](https://github.com/l0kifs/project-explorer-mcp/releases/new)
    - Create a new tag (e.g., `v0.2.0`)
    - Add release title and description
    - Click "Publish release"
+   
+   To verify the release:
+   ```bash
+   gh release view v0.2.0
+   ```
 
 4. **GitHub Actions will automatically**:
    - Build the package using UV
    - Publish to PyPI using trusted publishing
    - You can monitor the progress in the Actions tab
 
-### Manual Publishing
+## Manual Publishing
 
 If you need to publish manually:
 
@@ -65,7 +79,7 @@ If you need to publish manually:
    twine upload dist/*
    ```
 
-### Testing on TestPyPI
+## Testing on TestPyPI
 
 Before publishing to the main PyPI, you can test on TestPyPI:
 
